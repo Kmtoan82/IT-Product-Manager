@@ -1,0 +1,5 @@
+{
+  "name": "Quản lý Sản phẩm IT",
+  "description": "Hệ thống nhập liệu, hợp nhất và phân tích lợi nhuận sản phẩm IT từ nhiều nguồn dữ liệu (Excel/CSV).",
+  "requestFramePermissions": []
+}
