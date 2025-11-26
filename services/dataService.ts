@@ -1,6 +1,5 @@
 import Papa from 'papaparse';
 import { ProductData, RawInventory, RawPricing, RawProductInfo, AppConfig, ShopType, FeeCategory } from '../types';
-import { getFeeCategories } from './feeTables';
 
 // Helper to parse CSV string
 export const parseCSV = <T>(csvString: string): Promise<T[]> => {
@@ -20,31 +19,46 @@ export const parseCSV = <T>(csvString: string): Promise<T[]> => {
 };
 
 // Constants for Fees (As per user requirements)
-const PAYMENT_FEE_PERCENT = 4.91;
+const PAYMENT_FEE_PERCENT = 4.91; // Updated as per context usually around 4-5%
 const SERVICE_FEE_PERCENT = 2.5;
-const SERVICE_FEE_CAP = 50000;
+const SERVICE_FEE_CAP = 50000; // Max cap for some fees usually applies
 const FIXED_INFRA_FEE = 3000 + 1620; // 4,620 VND
 
-const calculateFee = (price: number, fixedRatePercent: number, useVoucherExtra: boolean): number => {
-  if (price <= 0) return 0;
-
-  // 1. Payment Fee
-  const paymentFee = price * (PAYMENT_FEE_PERCENT / 100);
-
-  // 2. Fixed Fee (Category based)
-  const fixedFee = price * (fixedRatePercent / 100);
-
-  // 3. Service Fee (Voucher Extra)
-  let serviceFee = 0;
-  if (useVoucherExtra) {
-    const rawServiceFee = price * (SERVICE_FEE_PERCENT / 100);
-    serviceFee = Math.min(rawServiceFee, SERVICE_FEE_CAP);
+// Export breakdown for UI display
+export const calculateFeeBreakdown = (price: number, fixedRatePercent: number, useVoucherExtra: boolean) => {
+  if (price <= 0) {
+    return { payment: 0, fixed: 0, service: 0, infra: 0, total: 0 };
   }
 
-  // 4. Infrastructure Fee
-  const infraFee = FIXED_INFRA_FEE;
+  // 1. Payment Fee (Phí thanh toán)
+  const payment = price * (PAYMENT_FEE_PERCENT / 100);
 
-  return paymentFee + fixedFee + serviceFee + infraFee;
+  // 2. Fixed Fee (Phí cố định)
+  const fixed = price * (fixedRatePercent / 100);
+
+  // 3. Service Fee (Phí dịch vụ - Voucher Extra)
+  let service = 0;
+  if (useVoucherExtra) {
+    const rawService = price * (SERVICE_FEE_PERCENT / 100);
+    // Note: Depending on platform policies, service fee might have a cap. 
+    // Using logic from previous code block.
+    service = Math.min(rawService, SERVICE_FEE_CAP); 
+  }
+
+  // 4. Infrastructure Fee (Phí hạ tầng/cố định nhỏ)
+  const infra = FIXED_INFRA_FEE;
+
+  return {
+    payment,
+    fixed,
+    service,
+    infra,
+    total: payment + fixed + service + infra
+  };
+};
+
+const calculateFee = (price: number, fixedRatePercent: number, useVoucherExtra: boolean): number => {
+  return calculateFeeBreakdown(price, fixedRatePercent, useVoucherExtra).total;
 };
 
 // Merging Logic
@@ -53,11 +67,13 @@ export const mergeData = (
   inventory: RawInventory[],
   pricing: RawPricing[],
   config: AppConfig,
-  existingData: ProductData[] = [] // Pass existing data to preserve category selections
+  activeFeeTable: FeeCategory[], // RECEIVE current dynamic fee table
+  existingData: ProductData[] = [], 
+  customRates: Record<string, number> = {} 
 ): ProductData[] => {
   const productMap = new Map<string, Partial<ProductData>>();
 
-  // Load existing choices to preserve them during re-merge
+  // Load existing choices
   const existingCategoryMap = new Map<string, string>();
   existingData.forEach(p => {
     if (p.feeCategoryId) {
@@ -75,7 +91,7 @@ export const mergeData = (
     return productMap.get(normalizedSku)!;
   };
 
-  // 1. Process Info File
+  // 1. Process Info
   info.forEach(item => {
     const entry = getEntry(item.sku);
     if (entry) {
@@ -84,7 +100,7 @@ export const mergeData = (
     }
   });
 
-  // 2. Process Inventory File
+  // 2. Process Inventory
   inventory.forEach(item => {
     const entry = getEntry(item.sku);
     if (entry) {
@@ -94,7 +110,7 @@ export const mergeData = (
     }
   });
 
-  // 3. Process Pricing File
+  // 3. Process Pricing
   pricing.forEach(item => {
     const entry = getEntry(item.sku);
     if (entry) {
@@ -103,15 +119,13 @@ export const mergeData = (
     }
   });
 
-  // Get current fee table
-  const feeTable = getFeeCategories(config.shopType);
-  const defaultCategory = feeTable[feeTable.length - 1]; // Usually "Others/Default"
+  // Use the passed active fee table
+  const defaultCategory = activeFeeTable[activeFeeTable.length - 1]; 
 
   // 4. Calculate Derived Fields & Finalize
   const results: ProductData[] = [];
 
   productMap.forEach((entry) => {
-    // Defaults
     const p = entry as ProductData;
     p.name = p.name || 'N/A';
     p.costPrice = p.costPrice || 0;
@@ -122,19 +136,20 @@ export const mergeData = (
     p.priceShopee = p.priceShopee || 0;
 
     // Determine Fee Category
-    // If user previously selected a category for this SKU, keep it (check if ID exists in current table)
-    // Since we standardized IDs (it_laptop, it_component), this switching works seamlessly.
     const preservedId = existingCategoryMap.get(p.sku);
-    const foundPreserved = preservedId ? feeTable.find(c => c.id === preservedId) : undefined;
+    // IMPORTANT: Find category in the ACTIVE table. If ID exists but not in table (shop switched), revert to default
+    const foundPreserved = preservedId ? activeFeeTable.find(c => c.id === preservedId) : undefined;
     
     const selectedCategory = foundPreserved || defaultCategory;
     p.feeCategoryId = selectedCategory.id;
-    p.feeRate = selectedCategory.rate;
+
+    // Determine Fee Rate: Check custom product overrides first, then category default
+    const customRate = customRates[p.sku];
+    p.feeRate = customRate !== undefined ? customRate : selectedCategory.rate;
 
     // Calculations
     p.platformFee = calculateFee(p.priceShopee, p.feeRate, config.useVoucherExtra);
     
-    // Lãi lỗ = Giá bán Shopee - Giá vốn - Chi phí sàn
     p.profit = p.priceShopee - p.costPrice - p.platformFee;
 
     results.push(p);

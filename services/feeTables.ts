@@ -1,63 +1,101 @@
 import { FeeCategory } from '../types';
 
-// --- STANDARDIZED IT CATEGORIES ---
-// IDs are consistent across shops to allow seamless switching without re-selecting categories.
-
-// 1. Shopee Mall Fees (Based on provided PDF)
+// --- SHOPEE MALL IT FEES (Áp dụng 08/09/2025) ---
+// Dựa trên tài liệu PDF chi tiết
 export const SHOPEE_MALL_IT_FEES: FeeCategory[] = [
-  { id: 'it_laptop', name: 'Máy tính & Laptop - Laptop', rate: 1.82 },
-  { id: 'it_desktop', name: 'Máy tính & Laptop - Máy tính bàn / All-in-one', rate: 1.82 },
-  { id: 'it_monitor', name: 'Máy tính & Laptop - Màn hình', rate: 1.82 },
-  { id: 'it_server', name: 'Máy tính & Laptop - Máy chủ & Tủ mạng', rate: 1.82 },
-  { id: 'it_component', name: 'Linh kiện (CPU, RAM, VGA, Mainboard, Case, Nguồn)', rate: 6.05 },
-  { id: 'it_storage', name: 'Lưu trữ (HDD, SSD, USB, Thẻ nhớ)', rate: 6.05 },
-  { id: 'it_network', name: 'Thiết bị mạng (Wifi, Router, Switch)', rate: 6.05 },
-  { id: 'it_printer', name: 'Máy in, Máy Scan & Thiết bị văn phòng', rate: 6.05 },
-  { id: 'it_accessory', name: 'Phụ kiện (Chuột, Phím, Cáp, Hub, Túi)', rate: 6.05 },
-  { id: 'it_software', name: 'Phần mềm', rate: 6.05 },
-  { id: 'it_camera', name: 'Camera & Flycam', rate: 5.50 },
-  { id: 'it_audio', name: 'Thiết bị Âm thanh (Loa, Tai nghe)', rate: 6.05 },
-  { id: 'it_console', name: 'Game Console & Phụ kiện', rate: 6.05 },
-  { id: 'it_default', name: 'Khác (Mặc định Mall)', rate: 6.05 },
+  // 3.30% Group - Máy tính & Server
+  { id: 'mall_sys_laptop', name: 'Laptop / Máy tính xách tay', rate: 3.30 },
+  { id: 'mall_sys_desktop', name: 'Máy Tính Bàn / All-in-one', rate: 3.30 },
+  { id: 'mall_sys_server', name: 'Máy Chủ (Server)', rate: 3.30 },
+  { id: 'mall_sys_mini', name: 'Máy Tính Mini', rate: 3.30 },
+
+  // 6.40% Group - Máy ảnh cao cấp
+  { id: 'mall_cam_dslr', name: 'Máy ảnh cơ / DSLR / Mirrorless', rate: 6.40 },
+
+  // 7.80% Group - Vi xử lý & Màn hình & Camera số
+  { id: 'mall_cpu', name: 'CPU - Bộ Vi Xử Lý', rate: 7.80 },
+  { id: 'mall_monitor', name: 'Màn Hình', rate: 7.80 },
+  { id: 'mall_cam_action', name: 'Máy quay hành động / KTS', rate: 7.80 },
+  { id: 'mall_lens', name: 'Ống kính máy ảnh', rate: 7.80 },
+
+  // 8.50% Group - Mainboard & Máy in
+  { id: 'mall_mainboard', name: 'Mainboard - Bo Mạch Chủ', rate: 8.50 },
+  { id: 'mall_printer_office', name: 'Máy In / Scan / Photo', rate: 8.50 },
+  { id: 'mall_water_purifier', name: 'Máy lọc nước', rate: 8.50 },
+
+  // 10.50% Group - Lưu trữ & Âm thanh cao cấp
+  { id: 'mall_ssd', name: 'Ổ Cứng SSD', rate: 10.50 },
+  { id: 'mall_hdd_ext', name: 'Ổ Cứng Di Động', rate: 10.50 },
+  { id: 'mall_ups', name: 'Bộ Lưu Điện', rate: 10.50 },
+  { id: 'mall_amp', name: 'Amply & Đầu chỉnh âm', rate: 10.50 },
+  { id: 'mall_draw_tab', name: 'Bảng Vẽ Điện Tử', rate: 10.50 },
+  { id: 'mall_print_3d', name: 'Máy In 3D / Mã vạch', rate: 10.50 },
+
+  // 12.60% Group - Linh Kiện & Phụ Kiện (Đa số)
+  { id: 'mall_ram', name: 'RAM Máy Tính', rate: 12.60 },
+  { id: 'mall_vga', name: 'VGA - Card Màn Hình', rate: 12.60 },
+  { id: 'mall_case_psu', name: 'Case / Nguồn Máy Tính', rate: 12.60 },
+  { id: 'mall_cooling', name: 'Quạt & Tản Nhiệt', rate: 12.60 },
+  { id: 'mall_mouse_kb', name: 'Chuột & Bàn Phím', rate: 12.60 },
+  { id: 'mall_sound', name: 'Loa / Tai nghe / Micro', rate: 12.60 },
+  { id: 'mall_network', name: 'Thiết Bị Mạng (Wifi/Router)', rate: 12.60 },
+  { id: 'mall_usb_nas', name: 'USB / OTG / NAS', rate: 12.60 },
+  { id: 'mall_odd', name: 'Ổ Đĩa Quang', rate: 12.60 },
+  { id: 'mall_acc_cam', name: 'Phụ kiện Máy ảnh / Flycam', rate: 12.60 },
+  { id: 'mall_software', name: 'Phần Mềm', rate: 12.60 },
+  { id: 'mall_cable', name: 'Cáp & Đầu chuyển', rate: 12.60 },
+  { id: 'mall_office_equip', name: 'Thiết Bị Văn Phòng Khác', rate: 12.60 },
+  
+  // Default
+  { id: 'mall_default', name: 'Khác / Mặc định', rate: 12.60 },
 ];
 
-// 2. Shopee Normal Fees (Based on provided PDF)
+// --- SHOPEE NORMAL FEES (Cấu hình theo ảnh) ---
 export const SHOPEE_NORMAL_IT_FEES: FeeCategory[] = [
-  { id: 'it_laptop', name: 'Máy tính & Laptop - Laptop', rate: 1.50 },
-  { id: 'it_desktop', name: 'Máy tính & Laptop - Máy tính bàn', rate: 1.50 },
-  { id: 'it_monitor', name: 'Máy tính & Laptop - Màn hình', rate: 1.50 },
-  { id: 'it_server', name: 'Máy tính & Laptop - Máy chủ & Tủ mạng', rate: 7.00 }, // Nhóm thiết bị mạng
-  { id: 'it_component', name: 'Linh kiện (CPU, RAM, VGA, Mainboard...)', rate: 7.00 },
-  { id: 'it_storage', name: 'Lưu trữ (HDD, SSD, USB, Thẻ nhớ)', rate: 7.00 },
-  { id: 'it_network', name: 'Thiết bị mạng (Wifi, Router, Switch)', rate: 7.00 },
-  { id: 'it_printer', name: 'Máy in, Máy Scan & Thiết bị văn phòng', rate: 8.00 }, // TB Văn phòng
-  { id: 'it_accessory', name: 'Phụ kiện (Chuột, Phím, Cáp...)', rate: 8.00 }, // Chuột bàn phím 8%
-  { id: 'it_software', name: 'Phần mềm', rate: 8.00 },
-  { id: 'it_camera', name: 'Camera & Flycam', rate: 7.00 },
-  { id: 'it_audio', name: 'Thiết bị Âm thanh', rate: 8.00 },
-  { id: 'it_console', name: 'Game Console & Phụ kiện', rate: 8.00 }, // Nhóm khác/chung
-  { id: 'it_default', name: 'Khác (Mặc định Thường)', rate: 8.00 },
+  // 1.50% Group
+  { id: 'norm_monitor', name: 'Màn Hình', rate: 1.50 },
+  { id: 'norm_desktop', name: 'Máy Tính Bàn', rate: 1.50 },
+  { id: 'norm_laptop', name: 'Laptop', rate: 1.50 },
+
+  // 7.00% Group
+  { id: 'norm_comp_parts', name: 'Linh Kiện Máy Tính (Chung)', rate: 7.00 },
+  { id: 'norm_comp_acc', name: 'Phụ Kiện Máy Tính', rate: 7.00 },
+  { id: 'norm_printer', name: 'Máy In & Máy Scan', rate: 7.00 },
+  { id: 'norm_storage', name: 'Thiết Bị Lưu Trữ', rate: 7.00 },
+  { id: 'norm_network', name: 'Thiết Bị Mạng', rate: 7.00 },
+  { id: 'norm_cable', name: 'Cáp & Đầu chuyển', rate: 7.00 },
+  { id: 'norm_music', name: 'Máy nghe nhạc', rate: 7.00 },
+  { id: 'norm_default', name: 'Khác', rate: 7.00 },
+
+  // 8.00% Group
+  { id: 'norm_mouse_kb', name: 'Chuột & Bàn Phím', rate: 8.00 },
+  { id: 'norm_office', name: 'Thiết Bị Văn Phòng', rate: 8.00 },
+  { id: 'norm_software', name: 'Phần Mềm', rate: 8.00 },
+  { id: 'norm_headphone', name: 'Tai nghe / Loa / Micro', rate: 8.00 },
+  { id: 'norm_amp', name: 'Amply & Dàn âm thanh', rate: 8.00 },
 ];
 
-// 3. TikTok Shop Fees (Based on provided PDF, using User's Formula logic)
+// --- TIKTOK SHOP FEES (Theo bảng biểu phí mới) ---
 export const TIKTOK_IT_FEES: FeeCategory[] = [
-  { id: 'it_laptop', name: 'Máy tính & Laptop - Laptop', rate: 3.30 },
-  { id: 'it_desktop', name: 'Máy tính & Laptop - Máy tính bàn', rate: 3.30 },
-  { id: 'it_monitor', name: 'Máy tính & Laptop - Màn hình', rate: 7.80 },
-  { id: 'it_server', name: 'Máy tính & Laptop - Máy chủ', rate: 3.30 },
-  { id: 'it_component', name: 'Linh kiện (VGA, Main...) - Mức TB', rate: 12.60 }, // Averaged safe rate
-  { id: 'it_storage', name: 'Lưu trữ (HDD, SSD, USB)', rate: 12.60 },
-  { id: 'it_network', name: 'Thiết bị mạng', rate: 12.60 },
-  { id: 'it_printer', name: 'Máy in & Máy Scan', rate: 10.50 }, // Máy in 3D is 10.50, general printers 8.50, picking safe high
-  { id: 'it_accessory', name: 'Phụ kiện (Chuột, Phím)', rate: 12.60 },
-  { id: 'it_software', name: 'Phần mềm', rate: 12.60 },
-  { id: 'it_camera', name: 'Camera & Flycam', rate: 7.80 }, // Máy ảnh KTS
-  { id: 'it_audio', name: 'Thiết bị Âm thanh', rate: 12.60 },
-  { id: 'it_console', name: 'Game Console', rate: 12.60 },
-  { id: 'it_default', name: 'Khác (Mặc định TikTok)', rate: 12.60 },
+  // 1.21% Group
+  { id: 'tt_phone', name: 'Điện thoại & Máy tính bảng', rate: 1.21 },
+
+  // 1.82% Group
+  { id: 'tt_sys', name: 'Laptop / PC / Màn hình', rate: 1.82 },
+
+  // 3.63% Group
+  { id: 'tt_cam_pro', name: 'Máy ảnh DSLR/Mirrorless', rate: 3.63 },
+
+  // 6.05% Group (Đa số linh kiện)
+  { id: 'tt_components', name: 'Linh kiện (RAM/CPU/VGA/Main...)', rate: 6.05 },
+  { id: 'tt_accessories', name: 'Phụ kiện (Chuột/Phím/Tai nghe...)', rate: 6.05 },
+  { id: 'tt_network', name: 'Thiết bị mạng', rate: 6.05 },
+  { id: 'tt_office', name: 'Thiết bị văn phòng', rate: 6.05 },
+  { id: 'tt_camera_acc', name: 'Camera GS & Phụ kiện', rate: 6.05 },
+  { id: 'tt_default', name: 'Khác / Mặc định', rate: 6.05 },
 ];
 
-export const getFeeCategories = (type: string): FeeCategory[] => {
+export const getInitialFeeCategories = (type: string): FeeCategory[] => {
   switch (type) {
     case 'SHOPEE_MALL': return SHOPEE_MALL_IT_FEES;
     case 'TIKTOK_SHOP': return TIKTOK_IT_FEES;

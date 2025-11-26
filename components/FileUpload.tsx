@@ -18,7 +18,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ label, description, accept, onD
 
   // Clear success message after 3 seconds
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setTimeout>;
     if (showSuccess) {
       timer = setTimeout(() => {
         setShowSuccess(false);
